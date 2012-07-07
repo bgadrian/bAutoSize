@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="btools_reset.css" />
+<!-- CDN aka lazyness -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="../jquery.bautosize.js"></script>
+<script type="text/javascript">
+/************************************************************************************
+
+            B T O O L S . E U 
+            
+            b3at examples
+            last modified : 07.07.2012
+            
+            Manual trigger the plugin
+            
+*************************************************************************************/
+
+/** When the dom is ready, we need to init the autoresize   */
+$(document).ready(function()
+{
+	
+    $("#wrapper").bAutoSize({
+        parent : $(window),
+        trigger_minimum : 5,
+        trigger_at_load : false,
+        height_perc : 0.6,
+        width_perc : 0.6,
+    });
+    
+});//end ready()
+</script>
+</head>
+<body> 
+    <input type="button" value="Resize it" onclick="$('#wrapper').bAutoSize(false,'resize');" />
+	<div id="wrapper" style="border: 1px solid red;position:relative;">
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. 
+    </div>
+</body>
+</html>

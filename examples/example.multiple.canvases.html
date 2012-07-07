@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="btools_reset.css" />
+<!-- CDN aka lazyness -->
+<script type="text/javascript" src="http://code.createjs.com/easeljs-0.4.2.min.js"></script>
+<script type="text/javascript" src="http://code.createjs.com/tweenjs-0.2.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="../jquery.bautosize.js"></script>
+<style type="text/css">
+body {
+    background-color:black;
+    margin:0;
+    padding:0;
+}
+#header {
+    width: 100%;
+    height:40px;
+    background-color:white;
+    margin:0;
+    padding:0;
+}
+#canvasContainer {
+    margin:auto;
+    border:1px solid yellow;
+    display:block;
+    position:relative;
+    padding:0;
+    margin:0 auto;/* center it */
+}
+#canvasContainer  canvas{
+    width:100%;
+    height:100%;
+}
+/* backstage should stay behind */
+#backDrawing {
+    position:absolute;
+    display:block;
+    top:0;
+    left:0;
+    z-index:-1;
+}
+</style>
+<script type="text/javascript">
+/************************************************************************************
+
+            B T O O L S . E U 
+            
+            b3at examples
+            last modified : 07.07.2012
+            
+            Auto resize more canvases.
+            
+*************************************************************************************/
+
+
+//make the variables global and initialize them, is not mandatory just nice
+canvas = null;
+stage = null;
+back_canvas = null;
+back_stage = null;
+shape = null;
+robot = null;
+
+/* Crate a basic raw enviroment */
+$('document').ready(function(){
+	//after resources are loaded init the plugin and draw the canvas
+    $('#canvasContainer').bAutoSize({
+        parent : $(window),
+        trigger_minimum : 10,//after 10px difference resize trigger it
+        height_perc : 0.9,//90% of window height
+        width_perc : 0.8,//80% of window width
+        height_offset : $('#header').outerHeight(),//ignore the header
+        callback : window.canvasRedraw,//redraw the canvas after resize
+        minimum : {w:300,h:300},
+        resize_children : true,//resize all the canvases too
+        debug : true
+    });
+	    
+    back_canvas = document.getElementById('backDrawing');
+    back_stage = new Stage(back_canvas);
+    //back_stage.autoClear = false;
+    
+    canvas = document.getElementById('prototip');
+    stage = new Stage(canvas);
+    
+    robot = new Bitmap('robot.png');
+    stage.addChild(robot);
+    
+    shape = new Shape();
+    back_stage.addChild(shape);
+    
+ });//end ready
+ 
+/** Canvas drawing, called at load and after each resize */
+function canvasRedraw()
+{
+    //just to show that the canvas was redrawed walk the robot
+    robot.x = rdm(canvas.width * 0.3,canvas.width * 0.5);
+    robot.y = rdm(canvas.height * 0.3,canvas.height * 0.5);;
+    stage.update();
+    
+    //on backstage do some stuff
+    //back_stage.clear();
+    
+    for (var i = 0;i<5;i++)
+    {
+        shape.graphics
+            .beginStroke('white')/*
+            .arcTo(
+                rdm(0,canvas.width),rdm(0,canvas.height),
+                rdm(0,canvas.width),rdm(0,canvas.height),
+                rdm(30,120));*/
+            .moveTo(rdm(0,canvas.width),rdm(0,canvas.height))
+            .lineTo(rdm(0,canvas.width),rdm(0,canvas.height));
+    }
+    back_stage.update();
+}
+
+/** Helper function - returns a random (int) number between min and max */
+	  function rdm(min,max)
+	  {
+	  	return Math.floor((max-min-1)*Math.random()) + min;
+	  }
+
+</script>
+</head>
+<body>
+    <div id="header">Dummy header</div>
+    <!-- the main canvas -->
+    <div id="canvasContainer">
+        <canvas id="backDrawing">Upgrade your browser dude !</canvas>
+        <canvas id="prototip">Upgrade your browser dude !</canvas>
+    </div>
+</body>
+</html>

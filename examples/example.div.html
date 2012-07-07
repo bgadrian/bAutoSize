@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<link rel="stylesheet" href="btools_reset.css" />
+<!-- CDN aka lazyness -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="../jquery.bautosize.js"></script>
+<script type="text/javascript">
+/************************************************************************************
+
+            B T O O L S . E U 
+            
+            b3at examples
+            last modified : 07.07.2012
+            
+            Random examples of dom elements sizing with bAutoSize plugin
+            
+*************************************************************************************/
+
+/** When the dom is ready, we need to init the autoresize   */
+$(document).ready(function()
+{
+	/* big red div will have 80% of window */
+    $("#anotherDiv").bAutoSize({
+        parent : $(window),
+        trigger_minimum : 10,
+        height_perc : 0.8,
+        width_perc : 0.8,
+        ignored_height : $('#header').outerHeight()
+    });
+    /* 50% of big div */
+    $("#insideDiv").bAutoSize({
+        trigger_minimum : 1,
+        height_perc : 0.5,
+        width_perc : 0.5,
+    });
+    
+    $('#insideSquare').bAutoSize({
+        trigger_minimum : 1,
+        width_perc : 0.3,
+        height_proportion : 1
+    });
+    
+     $('#minSquare').bAutoSize({
+        trigger_minimum : 1,
+        width_perc : 0.2,
+        height_perc : 0.2,
+        minimum : {w:100,h:100}
+    });
+    
+    
+});//end ready()
+</script>
+</head>
+<body> 
+	<div id="anotherDiv" style="border: 1px solid red;position:relative;">100% / 40% of window
+        <div id="insideDiv" style="border: 1px solid green">
+			50% 50% of parent
+		</div>
+        <div id="insideSquare" style="position: absolute;right:0;top:0;border:1px solid black;">
+			square 30% of  parent width
+		</div>
+		<div id="minSquare" style="position: aboslute;bottom:0;left:0;border:1px solid blue;">
+			minimum example
+		</div>
+    </div>
+</body>
+</html>
