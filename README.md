@@ -1,24 +1,24 @@
 bAutoSize
 =========
-## What ##
+## What
 jQuery plugin that resize elements at window resize.
 Build to escape CSS problems and cross browser compatibility issues.
 
-## Why ##
+## Why
 It can be used to window or relative parents.
 The element can be restrict to a specific width/height proportion, or to have minimum and/or maximum values.
 
 It was originally designed to make a full screen multi canvas (html5) application with multiple layer canvases.
  
-## About ##
-*version 0.1 - 07.07.2012
-*since 07.07.2012
-*author B.G.Adrian
-*website http://btools.eu
-*license MIT License
-*source https://github.com/BTooLs/bAutoSize
+## About
+ * version 0.1 - 07.07.2012
+ * since 07.07.2012
+ * author B.G.Adrian
+ * website http://btools.eu
+ * license MIT License
+ * source https://github.com/BTooLs/bAutoSize
  
-## Settings ##
+### Settings
  
 **parent** : dom element or jquery selector
 	default value : $(container).parent()
@@ -47,6 +47,6 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
  **debug** Debug data sent to javascript console.
 	default value : false,
  
- ## Examples ##
+ #### Examples
  
 See the examples folder.
