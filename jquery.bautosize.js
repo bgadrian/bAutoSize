@@ -8,7 +8,7 @@ The element can be restrict to a specific width/height proportion, or to have mi
 
 It was originally designed to make a full screen multi canvas (html5) application with multiple layer canvases.
  
- @version 0.1 - 07.07.2012
+ @version 0.2 - 08.07.2012
  @since 07.07.2012
  @author B.G.Adrian
  @website http://btools.eu
@@ -63,6 +63,7 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
         height_proportion : false, //false or > 0.1 value to keep the height proportional of width 
                                 //examples : "0.5", "1", "2"
         callback : null,//after each resize the callback will be called if any
+        callback_env : null, //the "this" env in which the function will be called. Default :window
         resize_children : false,//input the same size onto ALL children too
         debug : false,
         }, options || {});
@@ -182,7 +183,7 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 	        
 	        //external canvas
 	        if (typeof(settings.callback) == 'function')
-	           settings.callback.call();
+	           settings.callback.call((settings.callback_env) ? settings.callback_env : false);
 	        
 	        if (settings.debug)
 	            console.log('elem.w : ' + new_width  + ' elem.h : ' + new_height);

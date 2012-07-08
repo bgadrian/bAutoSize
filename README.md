@@ -52,6 +52,9 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
  **callback**  Function that will be called after each resize. No paremeters are sent (int this version).
 	Default value : null
 	
+**callback_env** Invocation value of the callback (enviroment). Ex "callback : window.myObj.refresh, callback_env : window.myObj".
+	Default value : window
+	
  **resize_children** Force sizes on all element childrens too.
 	Default value : false
 	
