@@ -23,17 +23,23 @@ $(document).ready(function()
 	
     $("#wrapper").bAutoSize({
         parent : $(window),
-        trigger_minimum : 5,
+        trigger_minimum : 1,
         trigger_at_load : false,
-        height_perc : 0.6,
-        width_perc : 0.6,
+        height_perc : 0.3,
+        width_perc : 0.3,
+        debug:true,
     });
     
 });//end ready()
 </script>
 </head>
 <body> 
-    <input type="button" value="Resize it" onclick="$('#wrapper').bAutoSize(false,'resize');" />
+    <input type="button" value="Resize it (if window resized)" onclick="$('#wrapper').bAutoSize('resize');" />
+    <input type="button" value="Resize it (force)" onclick="$('#wrapper').bAutoSize('resize',[true]);" />
+    <input type="button" value="Lock" onclick="$('#wrapper').bAutoSize('lock');" />
+    <input type="button" value="Unlock" onclick="$('#wrapper').bAutoSize('unlock');" />
+    <input type="button" value="Rollback" onclick="$('#wrapper').bAutoSize('rollback');" />
+    
 	<div id="wrapper" style="border: 1px solid red;position:relative;">
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. 
     </div>

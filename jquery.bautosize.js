@@ -8,7 +8,7 @@ The element can be restrict to a specific width/height proportion, or to have mi
 
 It was originally designed to make a full screen multi canvas (html5) application with multiple layer canvases.
  
- @version 0.2 - 08.07.2012
+ @version 0.3 - 12.07.2012
  @since 07.07.2012
  @author B.G.Adrian
  @website http://btools.eu
@@ -19,7 +19,7 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 (function($){
     
     
-   $.fn.bAutoSize = function(options,call)
+   $.fn.bAutoSize = function(options,args)
    {
         return this.each(function()
         {
@@ -29,8 +29,14 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
            bAutoSize = element.data('bAutoSize');
            if (bAutoSize)
            {
-                if (typeof(bAutoSize[call]) == 'function')
-                    bAutoSize[call].call();
+           		//if "options" is actually a function to call
+                if (typeof(bAutoSize[options]) == 'function')
+                {
+                	if (args && args.length > 0)
+                    	bAutoSize[options].apply(bAutoSize,args);
+                	else
+                    	bAutoSize[options].call(bAutoSize);
+                }
                 
                 return element.data('bAutoSize');
            }
@@ -49,6 +55,9 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
         var obj = this;
         var parent_last_size = {w:null,h:null};//last redraw window sizes
         
+        var original_size = {w:null,h:null};//original size, used in rollback method
+        this.locked = false;//internal lock of the resize
+        
         var settings = $.extend({
         parent : $(container).parent(),//parent on which the calculations are made
         trigger_at_load : true,//trigger it at page load
@@ -60,8 +69,8 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
         minimum : false,// false or object with minimum a sizes in PX
                                     //examples : "false", "{w : 300, h : 200}", "{h : 600}"
         maximum : false, //{w : 800, h : 600},
-        height_proportion : false, //false or > 0.1 value to keep the height proportional of width 
-                                //examples : "0.5", "1", "2"
+        height_proportion : false, //boolean or > 0.1 value to keep the height proportional of width 
+                                //examples : "0.5", "1", "2".True ('auto') or false to disable it.
         callback : null,//after each resize the callback will be called if any
         callback_env : null, //the "this" env in which the function will be called. Default :window
         resize_children : false,//input the same size onto ALL children too
@@ -69,9 +78,26 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
         }, options || {});
         
         this.init = function()
-        {            
-	        //add to ignored height the header as example
-	        settings.ignored_height += $('#header').outerHeight();
+        {
+	        
+	        var w = container.width();
+	        var h = container.height();
+	        //keep the original (before launch plugin) sizes
+	        original_size.w = w;
+	        original_size.h = h;
+	        
+	        //if height_proportion is set on Auto
+	        if (settings.height_proportion === true 
+					|| settings.height_proportion == 'auto')
+			{
+				if (w && h)
+					settings.height_proportion = Math.round(h / w * 100) / 100;
+				else
+				{
+					(settings.debug) ? console.log('[bautosize]Cannot calculate height_proportion.') : false;
+					settings.height_proportion = false;
+				}
+			}
 	        
 	        if (settings.trigger_at_load)
 	        {
@@ -81,20 +107,26 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 	        /* Enable the autoresize using jquery event at window resize */
 	        $(window).resize(function()
 	        {	
-	        	$(container).bAutoSize(false,'resize');
+	        	$(container).bAutoSize('resize');
 	        });
         }//end init()
         
         /* The main function */
         this.resize = function(force)
         {
+        	//if the plugin is locked nothing to do.
+        	if (this.locked)
+      		{
+      			return false;
+      		}
+        	
 	        ww = Math.floor(settings.parent.width());
 	        hh = Math.floor(settings.parent.height());
 	        
 	        if (settings.debug)
 	        {
-	        	console.log('autoresize for #' + container.attr('id'));
-	            console.log('parent.w : ' + ww  + ' parent.h : ' + hh);
+	        	console.log('[bautosize] for #' + container.attr('id'));
+	            console.log('[bautosize]parent.w : ' + ww  + ' parent.h : ' + hh);
 	        }
 	        
 	        //redraw only if a minimum difference is reached
@@ -119,7 +151,7 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 	        enforce - height proportion
 	        if you want this enforcement to be more important
 	        move it after minimum and maximum ifs */
-	        if (settings.height_proportion)
+	        if (settings.height_proportion > 0)
 	        {
 	            settings.debug ? (console.log('enforced proportion h' + settings.height_proportion)) : true;
 	            old_height = new_height;
@@ -140,13 +172,13 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 	            if (typeof settings.minimum.w !== 'undefined'
 	                && new_width < settings.minimum.w)
 	            {
-	                settings.debug ? (console.log('enforced minimum w' + settings.minimum.w)) : true;
+	                settings.debug ? (console.log('[bautosize]enforced minimum w' + settings.minimum.w)) : true;
 	                new_width = Math.max(new_width,settings.minimum.w);
 	            }
 	            if (typeof settings.minimum.h !== 'undefined'
 	                && new_height < settings.minimum.h)
 	            {
-	                settings.debug ? (console.log('enforced minimum h' + settings.minimum.h)) : true;
+	                settings.debug ? (console.log('[bautosize]enforced minimum h' + settings.minimum.h)) : true;
 	                new_height = Math.max(new_height,settings.minimum.h);
 	            }
 	        }
@@ -156,13 +188,13 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 	            if (typeof settings.maximum.w !== 'undefined'
 	                && new_width > settings.maximum.w)
 	            {
-	                settings.debug ? (console.log('enforced maximum w' + settings.maximum.w)) : true;
+	                settings.debug ? (console.log('[bautosize]enforced maximum w' + settings.maximum.w)) : true;
 	                new_width = Math.min(new_width,settings.maximum.w);
 	            }
 	            if (typeof settings.maximum.h !== 'undefined'
 	                && new_height > settings.maximum.h)
 	            {
-	                settings.debug ? (console.log('enforced maximum h' + settings.maximum.h)) : true;
+	                settings.debug ? (console.log('[bautosize]enforced maximum h' + settings.maximum.h)) : true;
 	                new_height = Math.min(new_height,settings.maximum.h);
 	            }
 	        }
@@ -186,12 +218,37 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 	           settings.callback.call((settings.callback_env) ? settings.callback_env : false);
 	        
 	        if (settings.debug)
-	            console.log('elem.w : ' + new_width  + ' elem.h : ' + new_height);
+	            console.log('[bautosize] elem.w : ' + new_width  + ' elem.h : ' + new_height);
 	        
 	        return true;
         }//end resize()
         
         
+        /* Used to permanently or temporarily disable the auto resize. */
+        this.lock = function()
+        {
+        	this.locked = true;
+        	(settings.debug) ? console.log('[bautosize]Plugin is now locked.') : false;
+        	return true;
+        }
+        this.unlock = function()
+        {
+        	this.locked = false;
+        	(settings.debug) ? console.log('[bautosize]Plugin is now UNlocked.') : false;
+        	return true;
+        }
+       
+        /* It will resize the element back to its original position. Best used after lock(); */
+        this.rollback = function()
+        {
+        	if (!original_size.w || !original_size.h || this.locked)
+        		return false;
+        	$(container)
+				.width(original_size.w)
+				.height(original_size.h);
+			(settings.debug) ? console.log('[bautosize]Rolled back to original size.') : false;
+			return true;
+        }
         
         /** When the dom is ready, we need to init the autoresize   */
         $(document).ready(this.init);//end ready()

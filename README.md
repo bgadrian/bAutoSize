@@ -5,13 +5,22 @@ jQuery plugin that resize elements at window resize.
 Build to escape CSS problems and cross browser compatibility issues.
 
 ## Why
-It can be used to window or relative parents.
+It can be used to resize elements (images, text boxes, etc) relative to window or its DOM parent.
 The element can be restrict to a specific width/height proportion, or to have minimum and/or maximum values.
 
 It was originally designed to make a full screen multi canvas (html5) application with multiple layer canvases.
- 
+
+Other applications : 
+* background image of your website (absolute or fixed positioned) "stretch" or "fit" like
+* multi browser implementation of "fluid layout" of any website
+* make one (more) or all elements of a layout to "auto fit" to window
+* canvas or JavaScript games
+* etc. .. your imagination is the limit ..
+
+To manual control the plugin (not auto trigger at window resize) see "manual.autosize.html" example.
+
 ## About
- * version 0.1 - 07.07.2012
+ * version 0.3 - 12.07.2012
  * since 07.07.2012
  * author B.G.Adrian
  * website http://btools.eu
@@ -46,7 +55,9 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
  **maximum** Works same as minimum.
 	Default value : false
 	
- **height_proportion** false or > 0.1 value to keep the height proportional of width. Examples : "0.5" means that the height will always be half of the width. "2" will be twice as big.
+ **height_proportion** boolean or > 0.1 value to keep the height proportional of width. 
+ 		Examples : "0.5" means that the height will always be half of the width. "2" will be twice as big.
+ 			True (or 'auto') will let the plugin calculate the proportion. False to disable it.
 	Default value : false
 	
  **callback**  Function that will be called after each resize. No paremeters are sent (int this version).
@@ -60,3 +71,14 @@ It was originally designed to make a full screen multi canvas (html5) applicatio
 	
  **debug** Debug data sent to javascript console.
 	Default value : false
+	
+#### Changelog
+
+v.0.3 12.07.2012
+* added lock and unlock methods
+* added rollback method
+* added : image examples
+* changed the way that methods are called
+* bugfix : methods were called without context (thisArg)
+* modified : height_proportion now supports 'auto' (true) value
+* modified : debug messages now has prefix "[bautosize]"
